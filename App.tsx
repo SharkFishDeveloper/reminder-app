@@ -19,10 +19,12 @@ const App = () => {
   const [allValues, setAllValues] = useState([]);
   const [made, setMade] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
+  const [showAnime,setShowAnime] = useState(true);
 
   useEffect(() => {
-    //console.log("Logging real => ",allValues);
-
+    setTimeout(()=>{
+      setShowAnime(false);
+    },1500)
     const getData = async () => {
       const allKeys = await AsyncStorage.getAllKeys();
       const allItems = await AsyncStorage.multiGet(allKeys);
@@ -39,6 +41,7 @@ const App = () => {
           return null;
         }
       });
+      editTodo.reverse();
       console.log('All Values:', allValues);
       setAllValues(editTodo);
     };
@@ -80,36 +83,44 @@ const App = () => {
 
   return (
     <ScrollView style={styles.scroll}>
-      <View >
-        <View style={styles.headingView}>
-          <Text style={styles.heading}>A daily set of</Text>
-          <Text style={styles.blueText}>reminder</Text>
-        </View>
-        <View style={styles.subWrapper}>
-          <Text style={styles.subheading}>Add a reminder</Text>
-          <TextInput style={styles.input} value={name} placeholder="Enter title" onChangeText={(text) => setName(text)} placeholderTextColor="white" />
-          <TextInput style={styles.input} value={desc} placeholder="Enter Description" onChangeText={(text) => setDesc(text)} placeholderTextColor="white" />
-          <TouchableOpacity style={styles.button} onPress={handleReminder}><Text style={styles.buttonText}>Create a reminder</Text></TouchableOpacity>
-        </View>
-        {allValues && allValues.map((item) => (
-          <View key={item.id}>
-            <ReminderCard item={item} onRequestRender={handleChildRequest} />
+      {!showAnime ? (
+        <View>
+          <View style={styles.headingView}>
+            <Text style={styles.heading}>A daily set of</Text>
+            <Text style={styles.blueText}>reminder</Text>
           </View>
-
-        ))}
-      </View>
-      {allValues.length === 0 && 
-      <View style={styles.bottomImageContainer}>
-        <Image source={astro} style={styles.image}/>
-       <View style={styles.worry}>
-       <Text style={styles.heading}>No tasks, nothing to</Text>
-       <Text  style={styles.worryText}>worry</Text>
-       </View>
-
-      </View>
-      }
+          <View style={styles.subWrapper}>
+            <Text style={styles.subheading}>Add a reminder</Text>
+            <TextInput style={styles.input} value={name} placeholder="Enter title" onChangeText={(text) => setName(text)} placeholderTextColor="white" />
+            <TextInput style={styles.input} value={desc} placeholder="Enter Description" onChangeText={(text) => setDesc(text)} placeholderTextColor="white" />
+            <TouchableOpacity style={styles.button} onPress={handleReminder}><Text style={styles.buttonText}>Create a reminder</Text></TouchableOpacity>
+          </View>
+          {allValues && allValues.map((item) => (
+            <View key={item.id}>
+              <ReminderCard item={item} onRequestRender={handleChildRequest} />
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View>
+          {allValues.length === 0 ? (
+            <View style={styles.bottomImageContainer}>
+              <Image source={astro} style={styles.image} />
+              <View style={styles.worry}>
+                <Text style={styles.heading}>No tasks, nothing to</Text>
+                <Text style={styles.worryText}>worry</Text>
+              </View>
+            </View>
+          ) : null}
+         <View style={{ flex: 1,justifyContent:'flex-end',alignItems:'center'}}>
+         <LottieView source={require('./assets/animations/welocme.json') } style={styles.welcome} autoPlay loop speed={2.5}/>
+         <Image source={astro} style={styles.image} />
+         </View>
+        </View>
+      )}
     </ScrollView>
   );
+  // 
 };
 
 export default App;
@@ -175,22 +186,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20, // Adjust the margin as needed
   },
-  image:{
-    marginTop:300,
-    height:90,
-    width:90,
-    borderRadius:50,
-    alignSelf:'center',
+  image: {
+    marginTop: 300,
+    height: 90,
+    width: 90,
+    borderRadius: 50,
+    alignSelf: 'center',
   },
-  worry:{
-    flexDirection:'row',
+  worry: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  worryText:{
-    color:'green',
-    fontSize:22,
-    fontWeight:'700',
+  worryText: {
+    color: 'green',
+    fontSize: 22,
+    fontWeight: '700',
 
+  },
+  welcome:{
+    height:300,
+    width:300,
+   alignSelf:'center'
+   
   }
 });

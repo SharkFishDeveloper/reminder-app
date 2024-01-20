@@ -2,14 +2,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
-
+import anime from "../assets/animations/congrats.json"
 
 
 const ReminderCard = ({ item, onRequestRender }) => {
     const [done, setDone] = useState(false);
+    const [count,setCount] = useState(true);
     const handleDone = () => {
         setDone((prev) => !prev);
     };
+
     const removeHandler = async () => {
         try {
             await AsyncStorage.removeItem(item.id);
@@ -32,12 +34,10 @@ const ReminderCard = ({ item, onRequestRender }) => {
                 <Text style={styles.text} >Description - {item.desc}</Text>
                 <Text style={styles.remove} onPress={removeHandler}>Remove</Text>
             </View>
-            {done && (
-                <LottieView source={require('../assets/animations/Animation - 1705759601063.json')}/>
-            )}
-        </View>
-    );
-};
+            {done && <LottieView source={anime} style={[styles.lottieAnim,!count && styles.anime]} autoPlay />}
+                    </View>
+                );
+            };
 
 export default ReminderCard;
 
@@ -71,4 +71,15 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         fontWeight: '800',
     },
+    lottieAnim: {
+        height:350,
+        width:400,
+        position: 'absolute',
+        top: -400, // Adjust as needed // Adjust as needed
+        // transform: [{ scale: 1.1 }], // Adjust scale as needed
+        // blurRadius: 5,// Adjust as needed
+      },
+      anime:{
+        display:'none'
+      }
 });
